@@ -213,7 +213,7 @@ const CreatePostPage: React.FC = () => {
                           as={Input}
                           type="number"
                           step="0.01"
-                          placeholder="Ex : 5 € ou 0 € si don"
+                          placeholder="Ex : 10 $"
                           className={errors.price && touched.price ? 'border-red-500' : ''}
                         />
                         {errors.price && touched.price && (
@@ -364,7 +364,7 @@ const CreatePostPage: React.FC = () => {
               <div className="flex justify-center pt-6">
                 <Button
                   type="submit"
-                  className="bg-teal-600 hover:bg-teal-700 text-white px-12 py-3 text-lg"
+                  className="bg-[#518581] hover:bg-teal-500 text-white px-12 py-3 text-lg"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Publication en cours...' : 'Publier l\'annonce'}
