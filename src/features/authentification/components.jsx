@@ -1,16 +1,11 @@
-// frontend/src/Components.jsx
+// src/features/authentification/components.jsx
 import styled from 'styled-components';
-// La fonction defaultShouldForwardProp sera passée comme second argument à customShouldForwardProp
 
 // Liste des props à ne PAS transmettre aux éléments DOM natifs
 const transientProps = new Set(['signinIn', 'isOpen', 'hasValue', 'isSelected']);
 
 // Fonction utilitaire pour filtrer les props
-// Le second argument, defaultShouldForwardProp, est fourni par styled-components
 const customShouldForwardProp = (prop, defaultShouldForwardProp) => {
-  // Si defaultShouldForwardProp n'est pas une fonction (e.g., undefined),
-  // on se base uniquement sur notre liste transientProps.
-  // Cela gérera les cas où styled-components ne passe pas le second argument.
   if (typeof defaultShouldForwardProp !== 'function') {
     return !transientProps.has(prop);
   }
@@ -18,7 +13,7 @@ const customShouldForwardProp = (prop, defaultShouldForwardProp) => {
 };
 
 // Le conteneur principal de l'application d'authentification
-export const Container = styled.div.withConfig({ // <--- Assurez-vous que c'est bien appliqué ici
+export const Container = styled.div.withConfig({
   shouldForwardProp: customShouldForwardProp,
 })`
   background-color: #fff;
@@ -33,7 +28,7 @@ export const Container = styled.div.withConfig({ // <--- Assurez-vous que c'est 
 
 // Conteneur pour le formulaire d'inscription
 export const SignUpContainer = styled.div.withConfig({
-  shouldForwardProp: customShouldForwardProp, // Applique le filtre de props
+  shouldForwardProp: customShouldForwardProp,
 })`
   position: absolute;
   top: 0;
@@ -52,7 +47,7 @@ export const SignUpContainer = styled.div.withConfig({
 
 // Conteneur pour le formulaire de connexion
 export const SignInContainer = styled.div.withConfig({
-  shouldForwardProp: customShouldForwardProp, // Applique le filtre de props
+  shouldForwardProp: customShouldForwardProp,
 })`
   position: absolute;
   top: 0;
@@ -190,7 +185,7 @@ export const FileButton = styled.label`
   margin-right: 10px; /* Espace entre le bouton et le nom du fichier */
   margin-top: 10px;
   margin-bottom: 10px;
-  margin-left: 10px;
+margin-left: 10px;
   transition: background-color 0.3s ease;
   flex-shrink: 0; /* Empêche le bouton de rétrécir */
   font-size: 12px; /* RÉDUIT: Taille de police du bouton */
@@ -457,7 +452,7 @@ export const LogoContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
+align-items: center;
   position: absolute;
   top: 10px;
   right: 110px;
@@ -473,7 +468,7 @@ export const OverlayLogoContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
+align-items: center;
   position: absolute;
   top: 10px;
   right: 110px;
