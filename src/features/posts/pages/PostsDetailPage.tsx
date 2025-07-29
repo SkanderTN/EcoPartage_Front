@@ -124,7 +124,7 @@ const PostDetailPage: React.FC = () => {
             </div>
 
             {post.type === PostType.PAID && post.price && (
-              <p className="text-3xl font-bold text-green-600 mb-4">{post.price} €</p>
+              <p className="text-3xl font-bold text-[#518581] mb-4">{post.price} €</p>
             )}
           </div>
           <div className="border-t pt-6">

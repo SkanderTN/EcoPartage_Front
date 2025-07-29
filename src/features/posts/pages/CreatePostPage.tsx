@@ -14,7 +14,7 @@ import { PostType, PostCondition, CreatePostDto } from '../types/post.types';
 import { CreatePostFormValues } from '../types/create-post.types';
 
 // Unités prédéfinies
-const UNITS = ['kg', 'g', 'L', 'mL', 'pièce(s)', 'paquet(s)', 'boîte(s)', 'autre'];
+const UNITS = ['kg', 'L', 'pièce(s)', 'paquet(s)', 'boîte(s)', 'autre'];
 
 // Schéma de validation Yup
 const validationSchema = Yup.object().shape({
@@ -142,7 +142,7 @@ const CreatePostPage: React.FC = () => {
       </Button>
 
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 font-crimson">Publier une annonce:</h1>
+        <h1 className="text-3xl text-[#518581] font-bold mb-8 font-crimson">Publier une annonce:</h1>
 
         <Formik
           initialValues={initialValues}
@@ -223,7 +223,7 @@ const CreatePostPage: React.FC = () => {
                       <Button
                         type="button"
                         variant="outline"
-                        className="w-full bg-teal-600 text-white hover:bg-teal-700"
+                        className="w-full bg-[#518581] text-white hover:bg-teal-300"
                       >
                         <Sparkles className="mr-2 h-4 w-4" />
                         Proposer un prix avec l'IA

@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '../../../components/ui/select';
 import { PostType, PostCondition, PostStatus, FilterPostDto } from '../types/post.types';
+import { X } from 'lucide-react';
 
 interface PostFiltersProps {
   filters: FilterPostDto;
@@ -17,7 +18,7 @@ interface PostFiltersProps {
 
 export const PostFilters: React.FC<PostFiltersProps> = ({ filters, onFilterChange }) => {
   return (
-    <div className="flex flex-wrap gap-3 items-center">
+    <div className="flex flex-wrap gap-3 ">
       {/* Type Filter */}
       <Select
         value={filters.type || ''}
@@ -101,7 +102,22 @@ export const PostFilters: React.FC<PostFiltersProps> = ({ filters, onFilterChang
             className="w-[120px]"
           />
         </>
+        
       )}
+      <button
+            onClick={() =>
+              onFilterChange({
+                type: undefined,
+                condition: undefined,
+                status: undefined,
+                city: undefined,
+                neighborhood: undefined,
+                minPrice: undefined,
+                maxPrice: undefined,
+              })
+            }>
+              <X className='w-4 h-4'></X>
+          </button>
 
       
     </div>

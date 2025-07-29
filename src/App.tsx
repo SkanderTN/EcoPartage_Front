@@ -8,7 +8,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Page d'accueil sans Layout (elle a son propre Header/Footer) */}
+        {/* Page d'accueil sans Layout */}
         <Route path="/" element={<HomePage />} />
         
         {/* Pages avec Layout */}

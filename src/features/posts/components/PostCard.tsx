@@ -122,7 +122,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       {/* Footer */}
       <CardFooter className="px-4 py-3 bg-gray-50">
         {post.type === PostType.PAID && post.price !== undefined ? (
-          <span className="font-bold text-lg">{post.price} €</span>
+          <span className="font-bold text-lg">{post.price} DT</span>
         ) : (
           <span className="text-gray-600 font-medium">Gratuit</span>
         )}

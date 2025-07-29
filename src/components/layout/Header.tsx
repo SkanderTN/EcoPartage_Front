@@ -29,7 +29,8 @@ const Header: React.FC = () => {
             <a 
               href="/" 
               className="text-gray-700 hover:text-gray-900 font-medium text-lg transition-colors"
-              style={{ fontFamily: 'Crimson Text, serif' }}
+              style={{ fontFamily: 'Crimson Text, serif' }} 
+              
             >
               Accueil
             </a>
