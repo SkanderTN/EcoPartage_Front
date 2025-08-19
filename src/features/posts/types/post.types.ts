@@ -25,6 +25,15 @@ export interface Quantity {
   unit: string;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Post {
   id: string;
   title: string;
@@ -40,6 +49,8 @@ export interface Post {
   city: string;
   postalCode?: string;
   neighborhood?: string;
+  category?: Category;
+  categoryId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -57,6 +68,7 @@ export interface CreatePostDto {
   city: string;
   postalCode?: string;
   neighborhood?: string;
+  categoryId?: string;
 }
 
 export interface UpdatePostDto extends Partial<CreatePostDto> {
@@ -72,6 +84,7 @@ export interface FilterPostDto {
   minPrice?: number;
   maxPrice?: number;
   q?: string;
+  categoryId?: string;
   page?: number;
   limit?: number;
 }

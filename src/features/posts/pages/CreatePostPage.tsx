@@ -1,67 +1,35 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Textarea } from '../../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../../components/ui/tooltip';
+import { ArrowLeft, Sparkles, Loader2 } from 'lucide-react';
 import { ImageUpload } from '../components/ImageUpload';
 import { CloudinaryService } from '../services/cloudinary.service';
 import { postsService } from '../services/posts.service';
-import { PostType, PostCondition, CreatePostDto } from '../types/post.types';
+import { PostType, PostCondition, CreatePostDto, Category } from '../types/post.types';
 import { CreatePostFormValues } from '../types/create-post.types';
+import { createPostValidationSchema } from '../utils/createPostValidation';
+import { usePriceEstimation } from '../hooks/usePriceEstimation';
+import { useFieldSuggestions } from '../hooks/useFieldSuggestions';
+import { useCategories, useCreateCategory } from '../hooks/useCategories';
 
 // Unités prédéfinies
 const UNITS = ['kg', 'L', 'pièce(s)', 'paquet(s)', 'boîte(s)', 'autre'];
-
-// Schéma de validation Yup
-const validationSchema = Yup.object().shape({
-  title: Yup.string()
-    .required('Le titre est obligatoire')
-    .min(5, 'Le titre doit contenir au moins 5 caractères')
-    .max(100, 'Le titre ne peut pas dépasser 100 caractères'),
-  
-  description: Yup.string()
-    .max(1000, 'La description ne peut pas dépasser 1000 caractères'),
-  
-  type: Yup.string()
-    .oneOf(['free', 'paid'], 'Type invalide')
-    .required('Veuillez choisir si l\'annonce est gratuite ou payante'),
-  
-  price: Yup.string().when('type', {
-    is: 'paid',
-    then: (schema) => schema
-      .required('Le prix est obligatoire pour une annonce payante')
-      .matches(/^\d+(\.\d{0,2})?$/, 'Prix invalide'),
-    otherwise: (schema) => schema.notRequired()
-  }),
-  
-  quantity: Yup.object().shape({
-    value: Yup.string()
-      .required('La quantité est obligatoire')
-      .matches(/^\d+(\.\d+)?$/, 'Quantité invalide'),
-    unit: Yup.string()
-      .required('L\'unité est obligatoire')
-  }),
-  
-  condition: Yup.string()
-    .oneOf(Object.values(PostCondition))
-    .required('L\'état est obligatoire'),
-  
-  city: Yup.string()
-    .required('La ville est obligatoire')
-    .min(2, 'Nom de ville invalide'),
-  
-  mainPhoto: Yup.mixed()
-    .required('La photo principale est obligatoire')
-});
 
 const CreatePostPage: React.FC = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCustomUnit, setShowCustomUnit] = useState(false);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const { estimatePrice, isEstimating, error: estimationError } = usePriceEstimation();
+  const { generateSuggestion, isGenerating, error: suggestionError } = useFieldSuggestions();
+  const { data: categories} = useCategories();
+  const { mutate: createCategory, isPending: isCreatingCategory } = useCreateCategory();
 
   const initialValues: CreatePostFormValues = {
     title: '',
@@ -77,6 +45,7 @@ const CreatePostPage: React.FC = () => {
     city: '',
     postalCode: '',
     neighborhood: '',
+    categoryId: '',
     mainPhoto: null,
     additionalPhotos: []
   };
@@ -111,6 +80,7 @@ const CreatePostPage: React.FC = () => {
         city: values.city,
         postalCode: values.postalCode || undefined,
         neighborhood: values.neighborhood || undefined,
+        categoryId: values.categoryId || undefined,
         mainPhoto: mainPhotoUrl,
         additionalPhotos: additionalPhotosUrls
       };
@@ -144,12 +114,13 @@ const CreatePostPage: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl text-[#518581] font-bold mb-8 font-crimson">Publier une annonce:</h1>
 
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ values, errors, touched, setFieldValue }) => (
+        <TooltipProvider>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={createPostValidationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ values, errors, touched, setFieldValue }) => (
             <Form className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Colonne gauche */}
@@ -157,12 +128,49 @@ const CreatePostPage: React.FC = () => {
                   {/* Titre */}
                   <div>
                     <label className="block text-lg font-semibold mb-2">Titre :</label>
-                    <Field
-                      name="title"
-                      as={Input}
-                      placeholder="Ex : Lot de tissus recyclés, Vaisselle en surplus..."
-                      className={errors.title && touched.title ? 'border-red-500' : ''}
-                    />
+                    <div className="flex gap-2">
+                      <Field
+                        name="title"
+                        as={Input}
+                        placeholder="Ex : Lot de tissus recyclés, Vaisselle en surplus..."
+                        className={`flex-1 ${errors.title && touched.title ? 'border-red-500' : ''}`}
+                      />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50 px-3"
+                              disabled={isGenerating || !values.mainPhoto}
+                              onClick={async () => {
+                                if (!values.mainPhoto) {
+                                  alert('Veuillez d\'abord télécharger une photo principale');
+                                  return;
+                                }
+                                
+                                const suggestion = await generateSuggestion('title', {
+                                  mainPhoto: values.mainPhoto,
+                                  condition: values.condition as PostCondition
+                                });
+                                
+                                if (suggestion) {
+                                  setFieldValue('title', suggestion);
+                                }
+                              }}
+                            >
+                              <Sparkles className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TooltipTrigger>
+                        {!values.mainPhoto && (
+                          <TooltipContent>
+                            <p>Vous devez d'abord télécharger une photo pour obtenir des suggestions</p>
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </div>
                     {errors.title && touched.title && (
                       <p className="text-red-500 text-sm mt-1">{errors.title}</p>
                     )}
@@ -170,7 +178,45 @@ const CreatePostPage: React.FC = () => {
 
                   {/* Description */}
                   <div>
-                    <label className="block text-lg font-semibold mb-2">Description :</label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-lg font-semibold">Description :</label>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50 px-3"
+                              disabled={isGenerating || !values.mainPhoto}
+                              onClick={async () => {
+                                if (!values.mainPhoto) {
+                                  alert('Veuillez d\'abord télécharger une photo principale');
+                                  return;
+                                }
+                                
+                                const suggestion = await generateSuggestion('description', {
+                                  mainPhoto: values.mainPhoto,
+                                  existingTitle: values.title,
+                                  condition: values.condition as PostCondition
+                                });
+                                
+                                if (suggestion) {
+                                  setFieldValue('description', suggestion);
+                                }
+                              }}
+                            >
+                              <Sparkles className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TooltipTrigger>
+                        {!values.mainPhoto && (
+                          <TooltipContent>
+                            <p>Vous devez d'abord télécharger une photo pour obtenir des suggestions</p>
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </div>
                     <Field
                       name="description"
                       as={Textarea}
@@ -183,57 +229,56 @@ const CreatePostPage: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Type (Gratuit/Payant) */}
-                  <div>
-                    <label className="block text-lg font-semibold mb-2">Type d'annonce :</label>
-                    <Select
-                      value={values.type}
-                      onValueChange={(value) => setFieldValue('type', value)}
-                    >
-                      <SelectTrigger className={errors.type && touched.type ? 'border-red-500' : ''}>
-                        <SelectValue placeholder="Choisir le type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="free">Gratuit</SelectItem>
-                        <SelectItem value="paid">Payant</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {errors.type && touched.type && (
-                      <p className="text-red-500 text-sm mt-1">{errors.type}</p>
-                    )}
-                  </div>
-
-                  {/* Prix (si payant) */}
-                  {values.type === 'paid' && (
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-lg font-semibold mb-2">Prix :</label>
-                        <Field
-                          name="price"
-                          as={Input}
-                          type="number"
-                          step="0.01"
-                          placeholder="Ex : 10 $"
-                          className={errors.price && touched.price ? 'border-red-500' : ''}
-                        />
-                        {errors.price && touched.price && (
-                          <p className="text-red-500 text-sm mt-1">{errors.price}</p>
-                        )}
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="w-full bg-[#518581] text-white hover:bg-teal-300"
-                      >
-                        <Sparkles className="mr-2 h-4 w-4" />
-                        Proposer un prix avec l'IA
-                      </Button>
-                    </div>
-                  )}
 
                   {/* Quantité */}
                   <div>
-                    <label className="block text-lg font-semibold mb-2">Quantité :</label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-lg font-semibold">Quantité :</label>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50 px-3"
+                              disabled={isGenerating || !values.mainPhoto}
+                              onClick={async () => {
+                                if (!values.mainPhoto) {
+                                  alert('Veuillez d\'abord télécharger une photo principale');
+                                  return;
+                                }
+                                
+                                const suggestion = await generateSuggestion('quantity', {
+                                  mainPhoto: values.mainPhoto,
+                                  existingTitle: values.title,
+                                  existingDescription: values.description,
+                                  condition: values.condition as PostCondition
+                                });
+                                
+                                if (suggestion) {
+                                  // Parse the suggestion to extract value and unit
+                                  const match = suggestion.match(/^(\d+\.?\d*)\s*(.*)$/);
+                                  if (match) {
+                                    setFieldValue('quantity.value', match[1]);
+                                    setFieldValue('quantity.unit', match[2] || 'pièce(s)');
+                                  } else {
+                                    setFieldValue('quantity.value', suggestion);
+                                  }
+                                }
+                              }}
+                            >
+                              <Sparkles className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TooltipTrigger>
+                        {!values.mainPhoto && (
+                          <TooltipContent>
+                            <p>Vous devez d'abord télécharger une photo pour obtenir des suggestions</p>
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </div>
                     <div className="flex gap-2">
                       <Field
                         name="quantity.value"
@@ -292,6 +337,77 @@ const CreatePostPage: React.FC = () => {
                         {errors.quantity.value || errors.quantity.unit}
                       </p>
                     )}
+                    {suggestionError && (
+                      <p className="text-red-500 text-sm mt-1">{suggestionError}</p>
+                    )}
+                  </div>
+
+                  {/* Catégorie */}
+                  <div>
+                    <label className="block text-lg font-semibold mb-2">Catégorie :</label>
+                    {!showCustomCategory ? (
+                      <Select
+                        value={values.categoryId}
+                        onValueChange={(value) => {
+                          if (value === 'custom') {
+                            setShowCustomCategory(true);
+                            setFieldValue('categoryId', '');
+                          } else {
+                            setFieldValue('categoryId', value);
+                          }
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choisir une catégorie (optionnel)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories?.map((category: Category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="custom">+ Créer une nouvelle catégorie</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Input
+                          value={newCategoryName}
+                          onChange={(e) => setNewCategoryName(e.target.value)}
+                          placeholder="Nom de la nouvelle catégorie"
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={!newCategoryName.trim() || isCreatingCategory}
+                          onClick={() => {
+                            createCategory(
+                              { name: newCategoryName.trim() },
+                              {
+                                onSuccess: (newCategory: Category) => {
+                                  setFieldValue('categoryId', newCategory.id);
+                                  setShowCustomCategory(false);
+                                  setNewCategoryName('');
+                                }
+                              }
+                            );
+                          }}
+                        >
+                          {isCreatingCategory ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Créer'}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => {
+                            setShowCustomCategory(false);
+                            setNewCategoryName('');
+                          }}
+                        >
+                          Annuler
+                        </Button>
+                      </div>
+                    )}
                   </div>
 
                   {/* État */}
@@ -313,6 +429,84 @@ const CreatePostPage: React.FC = () => {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Type (Gratuit/Payant) */}
+                  <div>
+                    <label className="block text-lg font-semibold mb-2">Type d'annonce :</label>
+                    <Select
+                      value={values.type}
+                      onValueChange={(value) => setFieldValue('type', value)}
+                    >
+                      <SelectTrigger className={errors.type && touched.type ? 'border-red-500' : ''}>
+                        <SelectValue placeholder="Choisir le type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="free">Gratuit</SelectItem>
+                        <SelectItem value="paid">Payant</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {errors.type && touched.type && (
+                      <p className="text-red-500 text-sm mt-1">{errors.type}</p>
+                    )}
+                  </div>
+
+                  {/* Prix (si payant) */}
+                  {values.type === 'paid' && (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-lg font-semibold mb-2">Prix :</label>
+                        <Field
+                          name="price"
+                          as={Input}
+                          type="number"
+                          step="0.01"
+                          placeholder="Ex : 5 € ou 0 € si don"
+                          className={errors.price && touched.price ? 'border-red-500' : ''}
+                        />
+                        {errors.price && touched.price && (
+                          <p className="text-red-500 text-sm mt-1">{errors.price}</p>
+                        )}
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50"
+                        disabled={isEstimating || !values.title || !values.mainPhoto}
+                        onClick={async () => {
+                          const estimatedPrice = await estimatePrice({
+                            title: values.title,
+                            description: values.description,
+                            quantity: values.quantity.value && values.quantity.unit ? values.quantity : undefined,
+                            condition: values.condition as PostCondition,
+                            mainPhoto: values.mainPhoto,
+                            additionalPhotos: values.additionalPhotos
+                          });
+                          
+                          if (estimatedPrice !== null) {
+                            setFieldValue('price', estimatedPrice.toString());
+                          }
+                        }}
+                      >
+                        {isEstimating ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Estimation en cours...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="mr-2 h-4 w-4" />
+                            Proposer un prix avec l'IA
+                          </>
+                        )}
+                      </Button>
+                      {estimationError && (
+                        <p className="text-red-500 text-sm mt-2">{estimationError}</p>
+                      )}
+                      <p className="text-gray-500 text-xs mt-2 text-center">
+                        L'IA aide à proposer un prix juste et transparent
+                      </p>
+                    </div>
+                  )}
 
                   {/* Localisation */}
                   <div className="space-y-4">
@@ -371,8 +565,9 @@ const CreatePostPage: React.FC = () => {
                 </Button>
               </div>
             </Form>
-          )}
-        </Formik>
+            )}
+          </Formik>
+        </TooltipProvider>
       </div>
     </div>
   );

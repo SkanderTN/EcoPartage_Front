@@ -1,7 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
 import { PostSearch } from '../features/posts/components/PostSearch';
 import { PostGrid } from '../features/posts/components/PostGrid';
 import { Pagination } from '../components/common/Pagination';
@@ -32,7 +30,6 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
       
       {/* Hero Section */}
       <section className="bg-white py-16">
@@ -90,7 +87,6 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 };

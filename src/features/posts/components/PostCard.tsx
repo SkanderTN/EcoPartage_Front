@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardFooter } from '../../../components/ui/card';
 import { Badge } from '../../../components/ui/badge';
-import { MapPin, Package } from 'lucide-react';
+import { MapPin, Package, Tag } from 'lucide-react';
 import { Post, PostType, PostCondition } from '../types/post.types';
 
 interface PostCardProps {
@@ -105,6 +105,15 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       {/* Content */}
       <CardContent className="p-4">
         <h3 className="font-semibold text-lg mb-2 line-clamp-2">{post.title}</h3>
+        
+        {/* Category */}
+        {post.category && (
+          <div className="flex items-center text-xs text-gray-500 mb-2">
+            <Tag className="w-3 h-3 mr-1" />
+            <span>{post.category.name}</span>
+          </div>
+        )}
+        
         <p className="text-gray-600 text-sm line-clamp-2 mb-3">{post.description}</p>
         
         <div className="flex items-center justify-between text-sm">

@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import { Post, CreatePostDto, UpdatePostDto, FilterPostDto, PostsResponse } from '../types/post.types';
+import { Post, CreatePostDto, UpdatePostDto, FilterPostDto, PostsResponse, Category } from '../types/post.types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -40,6 +40,21 @@ class PostsService {
 
   async deletePost(id: string): Promise<void> {
     await axios.delete(`${this.baseURL}/${id}`);
+  }
+
+  // Category methods
+  async getCategories(): Promise<Category[]> {
+    const response = await axios.get<Category[]>(`${this.baseURL}/categories`);
+    return response.data;
+  }
+
+  async createCategory(name: string, description?: string): Promise<Category> {
+    const response = await axios.post<Category>(`${this.baseURL}/categories`, { name, description });
+    return response.data;
+  }
+
+  async deleteCategory(id: string): Promise<void> {
+    await axios.delete(`${this.baseURL}/categories/${id}`);
   }
 }
 

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Sparkles } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 
 interface ImageUploadProps {
@@ -72,7 +72,11 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     <div className="space-y-6">
       {/* Photo principale */}
       <div>
-        <label className="block text-lg font-semibold mb-2">Photo principale *</label>
+        <label className="block text-lg font-semibold mb-1">Photo principale *</label>
+        <div className="flex items-center gap-2 mb-2 text-sm text-gray-600">
+          <Sparkles className="h-4 w-4 text-teal-600" />
+          <span>Après avoir téléchargé une photo, utilisez les icônes ✨ pour obtenir des suggestions IA</span>
+        </div>
         {!mainPhoto ? (
           <div
             {...getMainRootProps()}

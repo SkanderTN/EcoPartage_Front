@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Tag } from 'lucide-react';
 import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '../../../components/ui/popover';
 import { PostFilters } from './PostFilters';
+import CategoryFilter from './CategoryFilter';
 import { FilterPostDto } from '../types/post.types';
 
 interface PostSearchProps {
@@ -47,6 +48,25 @@ export const PostSearch: React.FC<PostSearchProps> = ({
           Rechercher
         </Button>
       </form>
+
+      {/* Categories button with dropdown */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            className="h-12 px-4 border border-gray-300 text-gray-700"
+          >
+            <Tag className="w-4 h-4 mr-2" />
+            Catégories
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[400px] p-4 shadow-lg">
+          <CategoryFilter
+            selectedCategoryId={filters.categoryId}
+            onCategoryChange={(categoryId) => onFilterChange({ categoryId })}
+          />
+        </PopoverContent>
+      </Popover>
 
       {/* Filtrer button with dropdown */}
       <Popover>

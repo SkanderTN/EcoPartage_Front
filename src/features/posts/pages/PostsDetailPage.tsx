@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
-import { ArrowLeft, MapPin, Package, Calendar } from 'lucide-react';
+import { ArrowLeft, MapPin, Package, Calendar, Tag } from 'lucide-react';
 import { usePost } from '../hooks/usePost';
 import { PostType, PostCondition } from '../types/post.types';
 
@@ -70,7 +70,7 @@ const PostDetailPage: React.FC = () => {
         <ArrowLeft className="mr-2 h-4 w-4" />
         Retour
       </Button>
-
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Images Section */}
         <div className="space-y-4">
@@ -124,7 +124,7 @@ const PostDetailPage: React.FC = () => {
             </div>
 
             {post.type === PostType.PAID && post.price && (
-              <p className="text-3xl font-bold text-[#518581] mb-4">{post.price} €</p>
+              <p className="text-3xl font-bold text-[#518581] mb-4">{post.price} DT</p>
             )}
           </div>
           <div className="border-t pt-6">
@@ -133,6 +133,13 @@ const PostDetailPage: React.FC = () => {
           </div>
           <div className="border-t pt-6"></div>
           <div className="space-y-4">
+            {post.category && (
+              <div className="flex items-center text-gray-600">
+                <Tag className="mr-2 h-5 w-5" />
+                <span>{post.category.name}</span>
+              </div>
+            )}
+
             <div className="flex items-center text-gray-600">
               <MapPin className="mr-2 h-5 w-5" />
               <span>{[post.street, post.neighborhood, post.city, post.postalCode].filter(Boolean).join(', ')}</span>

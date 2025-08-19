@@ -114,12 +114,11 @@ export const PostFilters: React.FC<PostFiltersProps> = ({ filters, onFilterChang
                 neighborhood: undefined,
                 minPrice: undefined,
                 maxPrice: undefined,
+                categoryId: undefined,
               })
             }>
               <X className='w-4 h-4'></X>
           </button>
-
-      
     </div>
   );
 };

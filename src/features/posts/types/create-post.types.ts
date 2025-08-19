@@ -12,6 +12,7 @@ export interface CreatePostFormValues {
   city: string;
   postalCode: string;
   neighborhood: string;
+  categoryId?: string;
   mainPhoto: File | null;
   additionalPhotos: File[];
 }
@@ -19,5 +20,4 @@ export interface CreatePostFormValues {
 export interface CloudinaryResponse {
   secure_url: string;
   public_id: string;
-  // autres propriétés si nécessaire
 }
