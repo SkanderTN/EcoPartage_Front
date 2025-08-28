@@ -34,7 +34,7 @@ export interface Category {
   updatedAt: string;
 }
 
-export interface Post {
+export interface PostBase {
   id: string;
   title: string;
   description: string;
@@ -51,8 +51,13 @@ export interface Post {
   neighborhood?: string;
   category?: Category;
   categoryId?: string;
+  userId: number; // ID du propriétaire de l'annonce
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Post extends PostBase {
+  userName?: string; // Nom du propriétaire (sera rempli par le backend)
 }
 
 export interface CreatePostDto {

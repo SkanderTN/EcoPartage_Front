@@ -29,17 +29,23 @@ class PostsService {
 
   async createPost(data: CreatePostDto): Promise<Post> {
     console.log('📤 Sending post data to backend:', data);
-    const response = await axios.post<Post>(this.baseURL, data);
+    const token = localStorage.getItem('authToken');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const response = await axios.post<Post>(this.baseURL, data, { headers });
     return response.data;
   }
 
-  async updatePost(id: string, data: UpdatePostDto): Promise<Post> {
-    const response = await axios.patch<Post>(`${this.baseURL}/${id}`, data);
+  async updatePost(id: string, data: UpdatePostDto): Promise<Post> {        
+    const token = localStorage.getItem('authToken');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const response = await axios.patch<Post>(`${this.baseURL}/${id}`, data, { headers });
     return response.data;
   }
 
   async deletePost(id: string): Promise<void> {
-    await axios.delete(`${this.baseURL}/${id}`);
+    const token = localStorage.getItem('authToken');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    await axios.delete(`${this.baseURL}/${id}`, { headers });
   }
 
   // Category methods
