@@ -12,8 +12,6 @@ Modern, responsive web app for ÉcoPartage. Built with React + TypeScript, Tailw
 - **Cart / Checkout** — multi-item reservation flow.  
 - **About** — mission & story.
 
-> These pages match the app screenshots & flows captured in the project report.
-
 ## 🧰 Tech Stack
 
 - **React 19** + **TypeScript**  
@@ -42,8 +40,6 @@ VITE_SOCKET_URL=http://localhost:4000
 # (Optional) Direct Cloudinary usage in UI
 VITE_CLOUDINARY_CLOUD_NAME=your_cloud
 ```
-
-> If you’re not using Vite, adapt variable names to your bundler’s convention.
 
 ### Install & Run
 
