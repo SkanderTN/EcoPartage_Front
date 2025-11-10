@@ -18,7 +18,7 @@ Modern, responsive web app for ÉcoPartage. Built with React + TypeScript, Tailw
 - **Tailwind CSS** (utility-first) + **shadcn/ui** components  
 - **State**: modern hooks & Context patterns  
 - **Real-time**: `socket.io-client`  
-- **Build**: Vite (or your preferred bundler) — update scripts below to match your setup
+- **Build**: Vite 
 
 ## 🚀 Getting Started
 
@@ -46,13 +46,6 @@ VITE_CLOUDINARY_CLOUD_NAME=your_cloud
 1. Install dependencies  
 2. Start dev server  
 3. Build for production  
-4. Preview production build (if applicable)
-
-Example script names (adapt to your package.json):
-- dev — local dev server  
-- build — production build  
-- preview — preview production build  
-- lint / format — code quality tasks
 
 ## 📁 Suggested Structure
 ```
@@ -85,9 +78,6 @@ src/
 - Status badges for listing states (AVAILABLE, RESERVED, COMPLETED)  
 - Clear empty states, loaders, and error toasts
 
-## 🧪 Testing (optional)
-Add React Testing Library / Vitest and include component & page specs.
-
 ## 🖼️ Screenshots
 ![EcoPartage1](https://github.com/user-attachments/assets/005face7-0466-49cd-8598-6b620d59d781)
 ![EcoPartage2](https://github.com/user-attachments/assets/5187c61c-cbb7-4c92-922c-f7d6a6172232)
@@ -96,12 +86,6 @@ Add React Testing Library / Vitest and include component & page specs.
 <img width="1350" height="1375" alt="EcoPartage5" src="https://github.com/user-attachments/assets/55317e79-53c5-4be4-acf9-3399fcffa4e5" />
 <img width="1350" height="2419" alt="EcoPartage6" src="https://github.com/user-attachments/assets/8ba91aa9-ff00-4dc6-81d0-ce632d7a6e18" />
 
-
-## 🗺️ Roadmap
-
-- Saved searches & alerts  
-- User settings (notifications, privacy)  
-- Internationalization
 
 ## 📝 License
 MIT.
