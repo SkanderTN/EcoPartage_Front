@@ -89,7 +89,7 @@ src/
 Add React Testing Library / Vitest and include component & page specs.
 
 ## 🖼️ Screenshots
-Add images under `/public` or `/docs/screenshots` and reference them in this README.
+![EcoPartage1](https://github.com/user-attachments/assets/005face7-0466-49cd-8598-6b620d59d781)
 
 ## 🗺️ Roadmap
 
