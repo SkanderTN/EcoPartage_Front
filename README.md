@@ -90,6 +90,12 @@ Add React Testing Library / Vitest and include component & page specs.
 
 ## 🖼️ Screenshots
 ![EcoPartage1](https://github.com/user-attachments/assets/005face7-0466-49cd-8598-6b620d59d781)
+![EcoPartage2](https://github.com/user-attachments/assets/5187c61c-cbb7-4c92-922c-f7d6a6172232)
+<img width="1350" height="1724" alt="EcoPartage3" src="https://github.com/user-attachments/assets/a8d48706-6657-48a5-ab9b-b54b94993133" />
+<img width="1350" height="2021" alt="EcoPartage4" src="https://github.com/user-attachments/assets/ca2832c8-3f67-464a-9d84-bae439a61cab" />
+<img width="1350" height="1375" alt="EcoPartage5" src="https://github.com/user-attachments/assets/55317e79-53c5-4be4-acf9-3399fcffa4e5" />
+<img width="1350" height="2419" alt="EcoPartage6" src="https://github.com/user-attachments/assets/8ba91aa9-ff00-4dc6-81d0-ce632d7a6e18" />
+
 
 ## 🗺️ Roadmap
 
